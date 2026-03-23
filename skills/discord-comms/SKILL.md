@@ -1,10 +1,11 @@
 ---
 name: discord-comms
-version: 1.0.0
+version: 1.1.0
 description: >-
-  LobsterFarm bot communication rules for Discord. Governs when to respond,
-  how to format messages, which channels to use, how to handle ambiguity,
-  and inter-bot coordination. TRIGGER for all Discord-facing interactions.
+  LobsterFarm bot communication rules for Discord. Covers when to respond,
+  message format, channel assignments, ambiguity handling, inter-bot
+  coordination, and how to mention bots/users so they receive notifications.
+  TRIGGER for all Discord-facing interactions.
 origin: lobsterfarm
 ---
 
@@ -28,6 +29,32 @@ You MUST NOT respond to:
 - Conversation not directed at you
 - Messages from other bots (unless a defined inter-bot workflow is active)
 - Channels you are not designated for
+
+## Mentioning Bots and Users
+
+**Critical:** A plain `@Name` does NOT deliver an inbound notification to a bot.
+Always use the numeric mention format: `<@NUMERIC_ID>`
+
+### Known Bots & Users (LobsterFarm server)
+
+| Name | Role | Mention tag |
+|------|------|-------------|
+| Claude Code (Crab) | CDK infra bot | `<@1485489698955595806>` |
+| ClawDude (OpenClaw) | Lambda handler bot | `<@1482084731045806100>` |
+| gfrshadow | Human owner | `<@352640942995406848>` |
+
+**Correct:**
+```
+<@1485489698955595806> PR #7 is ready for your review.
+```
+
+**Wrong (recipient won't see it):**
+```
+Claude Code, PR #7 is ready for your review.
+```
+
+When adding new bots or team members, append their ID to this table and
+update this skill via the `install-ecc-skill` workflow.
 
 ## Channel Assignments
 
@@ -81,3 +108,4 @@ You MUST NOT ask more than one follow-up per request.
 
 - Max **3 messages in a row** without a human turn.
 - No unsolicited summaries or reminders unless triggered by a configured cron.
+
