@@ -1,49 +1,68 @@
 ---
 name: github-workflow
 version: 1.0.0
-description: LobsterFarm GitHub workflow rules. Load this skill to govern how you interact with GitHub — when to open issues, how to write PRs, how to record decisions, and what you must never do.
+description: >-
+  LobsterFarm GitHub interaction rules. Governs when to open issues, how to
+  write PRs, how to record decisions as ADRs, and hard limits on destructive
+  git operations. TRIGGER when interacting with any LobsterFarm GitHub repo.
+origin: lobsterfarm
 ---
 
 # GitHub Workflow SOP
 
-You are operating in the LobsterFarm GitHub org. Follow these rules when interacting with GitHub.
+Rules for all LobsterFarm bot interactions with GitHub.
+
+## When to Activate
+
+- Opening or updating a GitHub issue
+- Creating or reviewing a pull request
+- Recording an architectural or product decision
+- Commenting on any LobsterFarm repo
 
 ## When to Open an Issue
 
-You MUST open a GitHub issue before starting work on:
+MUST open an issue before:
 - Any non-trivial code or schema change
-- Architectural decisions that affect multiple bots or services
-- Bugs that affect production behavior
-- Any change to API contracts or data models
+- Architectural decisions affecting multiple bots or services
+- Bugs impacting production behavior
+- Changes to API contracts or data models
 
-You MAY skip an issue for:
+MAY skip for:
 - Typo and copy fixes
 - Config changes with no behavioral impact
 
 ## Issue Format
 
-Every issue you open MUST include:
-- **What** — what is changing or being decided
-- **Why** — the motivation or trigger
-- **Open questions** — what needs human input before proceeding
-- **Checklist** — concrete steps to close the issue
+Every issue MUST include:
+
+```markdown
+## What
+[What is changing or being decided]
+
+## Why
+[Motivation or trigger]
+
+## Open Questions
+- [ ] [What needs human input]
+
+## Checklist
+- [ ] [Concrete steps to close this issue]
+```
 
 ## Pull Requests
 
 - Every non-trivial change MUST have a PR.
-- Your PR MUST reference its issue using `Closes #N` or `Relates to #N`.
-- Your PR description MUST include: a brief summary of changes and a test plan.
-- You MUST comment on a PR if you complete work or hit a blocker.
-- You MUST NOT merge your own PR without human approval unless you have been explicitly authorized to do so.
-- You MUST NOT force-push to `main`.
+- PR MUST reference its issue: `Closes #N` or `Relates to #N`.
+- PR description MUST include: summary of changes + test plan.
+- MUST comment on a PR when you complete work or hit a blocker.
+- MUST NOT merge your own PR without explicit human approval.
+- MUST NOT force-push to `main`.
 
-## Decision Records
+## Decision Records (ADRs)
 
-When you make or participate in an architectural or product decision, record it in `docs/decisions/`.
+Record architectural and product decisions in `docs/decisions/`.
 
-Filename format: `NNN-short-title.md` (e.g. `001-dynamo-key-design.md`)
-
-Use this template:
+Filename: `NNN-short-title.md` (e.g. `001-dynamo-key-design.md`)
 
 ```markdown
 # NNN — Title
@@ -57,23 +76,30 @@ Why this decision was needed.
 ## Decision
 What was decided.
 
+## Alternatives Considered
+### Option A
+- Pros / Cons / Why not chosen
+
 ## Consequences
 What changes as a result.
 ```
 
 ## Identifying Yourself
 
-When commenting on issues or PRs, ALWAYS begin your comment with your bot name:
+Always begin GitHub comments with your bot name:
 
 ```
-ClawDude: I've implemented the void endpoint. PR is ready for review.
+ClawDude: Implementation complete. PR ready for review.
 ```
 
 ## Labels
 
-Apply labels to issues and PRs when creating them. Common labels:
-- `bot-comms` — communication and coordination
-- `product` — product decisions
-- `infra` — infrastructure
-- `api` — API design
-- `needs-human` — blocked, requires human input
+Apply these labels when creating issues/PRs:
+
+| Label | Use when |
+|-------|---------|
+| `bot-comms` | Communication and coordination |
+| `product` | Product decisions |
+| `infra` | Infrastructure |
+| `api` | API design |
+| `needs-human` | Blocked, requires human input |

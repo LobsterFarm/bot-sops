@@ -1,55 +1,74 @@
 ---
 name: error-handling
 version: 1.0.0
-description: LobsterFarm error handling rules. Load this skill to govern how you surface errors to users and when to alert — never fail silently, never expose internals, always give a next step.
+description: >-
+  LobsterFarm error handling rules. Never fail silently, never expose internals,
+  always give a next step. Covers Discord error messages, logging thresholds,
+  and retry policy. TRIGGER whenever an operation fails or an exception is caught.
+origin: lobsterfarm
 ---
 
 # Error Handling SOP
 
+Rules for surfacing errors correctly across all LobsterFarm bots.
+
+## When to Activate
+
+- Any operation fails (API call, file write, parse error)
+- Deciding what to say to a user after a failure
+- Deciding whether to retry
+- Deciding whether to post to `#bot-alerts`
+
 ## Core Rules
 
-1. **Never fail silently.** Every error must be surfaced somewhere.
-2. **Never expose internals.** Raw stack traces, error codes, internal IDs, and service names MUST NOT appear in Discord.
-3. **Always give a next step** when you can — what the user should do, or who to contact.
+1. **Never fail silently** — every error must be surfaced somewhere.
+2. **Never expose internals** — no stack traces, error codes, internal IDs, or service names in Discord.
+3. **Always give a next step** — what the user should try, or who to contact.
 
-## Error Categories and Responses
+## Error Categories
 
-| Category | Example trigger | Your response |
-|----------|----------------|--------------|
-| Input error | Missing field, bad amount format | Ask one follow-up or give an example |
-| Not found | Expense ID doesn't exist | Short plain-language message |
-| Unauthorized | Your bot lacks permission | Tell the user; escalate if unexpected |
-| API / infra error | 5xx, timeout | Generic message + log to `#bot-alerts` |
+| Category | Example | Response |
+|----------|---------|---------|
+| Input error | Missing field, bad format | One follow-up or example |
+| Not found | ID doesn't exist | Short plain message |
+| Unauthorized | Bot lacks permission | Tell user; escalate if unexpected |
+| API / infra (5xx) | Timeout, server error | Generic message + `#bot-alerts` |
 | Unknown | Anything else | Generic message; open GitHub issue if recurring |
 
 ## Discord Error Messages
 
-Keep them short, plain, and actionable.
-
 ```
+# Correct
 Couldn't find that expense. Check the ID and try again.
 Missing amount — try: @ClawDude spent $20 food
 Something went wrong on my end. Try again in a moment.
-I don't have permission to do that. Ask an admin to check my access.
+
+# Wrong
+UnprocessableEntityException: ValidationError at handler.ts:42
+Error 500: Internal Server Error from https://api.internal/...
 ```
+
+## Retry Policy
+
+- **5xx errors**: retry once automatically, then surface to the user.
+- **4xx errors**: do NOT retry — these are input problems, not transient.
+- After failure: return to idle. Do not queue retries without human input.
 
 ## Logging
 
-You MUST log all API errors (4xx, 5xx) with:
+Log all API errors (4xx, 5xx) internally with:
 - Timestamp
-- Your bot identity
-- The action you attempted
-- The error code or message (internal only, not to Discord)
+- Bot identity
+- Action attempted
+- Error code or type
 
-When the same error type occurs 3 or more times within an hour, post an alert in `#bot-alerts`.
+## `#bot-alerts` Threshold
 
-`#bot-alerts` messages must include:
-- What failed
-- How many times it has occurred
-- A link to logs if available
+Post to `#bot-alerts` when the same error type occurs **3+ times in an hour**.
 
-## Retry Rules
-
-- On 5xx errors: retry **once** automatically, then surface to the user.
-- On 4xx errors: do **not** retry — these are input problems, not transient failures.
-- After a failure, return to idle. Do not queue retries without human input.
+Alert format:
+```
+[BotName] alert: <error type> — <N> occurrences in the last hour
+Last seen: <timestamp>
+Logs: <link if available>
+```
