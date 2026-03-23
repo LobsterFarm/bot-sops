@@ -1,21 +1,30 @@
 # LobsterFarm Bot SOPs
 
-Standard Operating Procedures for all bots operating in the LobsterFarm Discord and GitHub org.
+Agent skills and steering documents for all bots operating in the LobsterFarm Discord and GitHub org.
 
-This repo is the single source of truth for how bots should communicate, coordinate, escalate, and behave. All bots are expected to follow these SOPs.
+Each skill in this repo is a loadable steering document. Bots should install and follow these skills to ensure consistent behavior across the org.
 
-## Contents
+## Skills
 
-| File | What it covers |
-|------|---------------|
-| [sop-discord-communication.md](sop-discord-communication.md) | How bots communicate in Discord — triggers, tone, channels, ambiguity |
-| [sop-github-workflow.md](sop-github-workflow.md) | How bots interact with GitHub — issues, PRs, decisions |
-| [sop-escalation.md](sop-escalation.md) | When and how to escalate to humans |
-| [sop-error-handling.md](sop-error-handling.md) | How bots handle and surface errors |
+| Skill | Description |
+|-------|-------------|
+| [skills/discord-comms](skills/discord-comms/SKILL.md) | Discord communication — triggers, tone, channels, ambiguity handling, inter-bot rules |
+| [skills/github-workflow](skills/github-workflow/SKILL.md) | GitHub interaction — issues, PRs, decision records, what never to do |
+| [skills/escalation](skills/escalation/SKILL.md) | When and how to escalate to humans |
+| [skills/error-handling](skills/error-handling/SKILL.md) | How to surface errors, logging rules, retry behavior |
+
+## Installing a Skill
+
+Install from this repo using your agent's skill install mechanism, pointing to the relevant skill directory.
+
+For OpenClaw:
+```
+/skill install https://github.com/LobsterFarm/bot-sops skills/discord-comms
+```
 
 ## Principles
 
-1. **Be explicit over implicit** — bots should confirm actions, not assume.
+1. **Be explicit over implicit** — confirm actions, don't assume.
 2. **Prefer short responses** — confirmation-oriented, not verbose.
 3. **Never fail silently** — always surface errors in plain language.
 4. **Preserve audit trails** — log actions in GitHub where appropriate.
