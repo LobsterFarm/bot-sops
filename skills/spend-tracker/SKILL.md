@@ -1,7 +1,7 @@
 ---
 name: spend-tracker
-version: 1.0.0
-description: Handles spend-tracker commands in the #spending channel. TRIGGER when a message in the spending channel looks like an expense log, query, void, or summary request.
+version: 1.1.0
+description: Handles spend-tracker commands in the #spending channel. TRIGGER when a message in the spending channel looks like an expense log, query, void, or summary request — INCLUDING messages with image attachments (receipts, screenshots).
 ---
 
 # Spend Tracker — Channel Skill
@@ -37,6 +37,35 @@ add $8.99 streaming note: netflix
 - Infer `category` from the noun (coffee, groceries, etc.)
 - Default `currency` to `USD`
 - Reply: `✅ Logged $12.50 coffee (id: <id>)`
+
+### Log from receipt / image
+**Patterns:** message has an image attachment (receipt, screenshot, photo of a bill)
+```
+[image attachment]
+[image attachment] lunch today
+```
+1. Download the attachment using the `download_attachment` tool (pass `chat_id` and `message_id`)
+2. View the downloaded image — use your vision capability to extract:
+   - **amountCents**: total amount due/paid (convert to cents, ignore tax subtotals if a grand total is visible)
+   - **currency**: from receipt symbol or text (default `USD`)
+   - **category**: infer from merchant type (e.g. restaurant → `dining`, supermarket → `groceries`, gas station → `fuel`)
+   - **note**: merchant name + date from receipt (e.g. `"Starbucks 2026-03-24"`)
+3. If the amount is ambiguous (e.g. multiple totals visible), ask the user to confirm before logging
+4. Otherwise log immediately via `POST /expenses` and reply with extracted details:
+
+```
+🧾 Receipt scanned
+   $24.50 · dining · 2026-03-24
+   note: Chipotle 2026-03-24
+   id: 01KMEK...
+
+   (tap to void if wrong)
+```
+
+If the image is not a receipt or no amount can be extracted, reply:
+```
+❓ Couldn't read an amount from that image. Try: log $X <category>
+```
 
 ### List expenses
 **Patterns:** `expenses`, `list`, `show`, `what did I spend`
