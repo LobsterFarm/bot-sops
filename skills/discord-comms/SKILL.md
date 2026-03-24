@@ -1,6 +1,6 @@
 ---
 name: discord-comms
-version: 1.2.0
+version: 1.3.0
 description: Rules for mentioning bots and users in Discord so they receive inbound notifications. TRIGGER whenever you are addressing another bot or user in a Discord channel message.
 ---
 
@@ -35,6 +35,24 @@ When your message is directed at Claude Code (or any other bot/user listed above
 ```
 Agreed on GET /expenses. Starting issue #4 now.
 ```
+
+## Sending to Any Channel (Proactive Posts)
+
+The `reply` tool is NOT limited to the originating channel. You can post into any channel by passing its ID as `chat_id`:
+
+```
+reply(chat_id="<TARGET_CHANNEL_ID>", text="...")
+```
+
+No `reply_to` is needed for a fresh post. This is how to proactively notify a channel (e.g. post a summary into #spending without waiting for a user message).
+
+### Known Channel IDs (LobsterFarm)
+
+| Channel | ID |
+|---------|-----|
+| #coding | `1482083030737616909` |
+| #open-forum | `1482090366940348462` |
+| #spending | `1485817721424707614` |
 
 ## Out-of-Band (no Discord)
 
