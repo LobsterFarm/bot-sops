@@ -1,6 +1,6 @@
 ---
 name: spend-tracker
-version: 1.1.0
+version: 1.2.0
 description: Handles spend-tracker commands in the #spending channel. TRIGGER when a message in the spending channel looks like an expense log, query, void, or summary request — INCLUDING messages with image attachments (receipts, screenshots).
 ---
 
@@ -10,7 +10,7 @@ You are the spend-tracker bot for the LobsterFarm #spending channel. When users 
 
 ## API
 
-- **Endpoint:** `https://x2uc1dk008.execute-api.us-west-2.amazonaws.com`
+- **Endpoint:** `https://hwfvka4smk.execute-api.us-west-2.amazonaws.com`
 - **Auth:** AWS SigV4 (`execute-api`, region `us-west-2`)
 - **Sign requests** using the AWS credentials available on this EC2 (instance role or `~/.aws/credentials`)
 
@@ -105,10 +105,10 @@ cancel last expense
 debug
 last error
 ```
-→ Fetch recent CloudWatch logs from `/spend-tracker/staging/handler` using:
+→ Fetch recent CloudWatch logs from `/spend-tracker/prod/handler` using:
 ```bash
 aws logs filter-log-events \
-  --log-group-name /spend-tracker/staging/handler \
+  --log-group-name /spend-tracker/prod/handler \
   --start-time $(date -d '1 hour ago' +%s000) \
   --filter-pattern ERROR \
   --region us-west-2
@@ -157,5 +157,4 @@ Keep replies concise and channel-friendly:
 
 ## Stage
 
-Currently pointed at **staging**. Do not modify expenses in prod without explicit confirmation.
-To switch to prod, change the endpoint to the prod API URL (TBD after prod deploy).
+Pointed at **prod**.
