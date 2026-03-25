@@ -10,15 +10,20 @@ You are the spend-tracker bot for the LobsterFarm #spending channel. When users 
 
 ## API
 
-- **Endpoint:** `https://hwfvka4smk.execute-api.us-west-2.amazonaws.com`
+- **Endpoint:** resolve at runtime from SSM:
+  ```bash
+  aws ssm get-parameter --name "/spend-tracker/prod/api-url" --region us-west-2 --query "Parameter.Value" --output text
+  ```
+  Current value: `https://hwfvka4smk.execute-api.us-west-2.amazonaws.com`
 - **Auth:** AWS SigV4 (`execute-api`, region `us-west-2`)
 - **Sign requests** using the AWS credentials available on this EC2 (instance role or `~/.aws/credentials`)
 
 Use the AWS SDK or `aws-sdk` to sign requests. In a shell context, use:
 ```bash
+API_URL=$(aws ssm get-parameter --name "/spend-tracker/prod/api-url" --region us-west-2 --query "Parameter.Value" --output text)
 curl --aws-sigv4 "aws:amz:us-west-2:execute-api" \
      --user "$(aws configure get aws_access_key_id):$(aws configure get aws_secret_access_key)" \
-     ...
+     "$API_URL/expenses" ...
 ```
 
 ## Commands
