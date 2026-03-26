@@ -1,6 +1,6 @@
 ---
 name: trading-insights
-version: 1.0.0
+version: 1.1.0
 description: "Daily stock market insights for LobsterFarm. TRIGGER when: (1) an OpenClaw cron fires the daily trading briefing, OR (2) a user in #trading (channel 1486584391256772688) asks for market news, watchlist updates, or trading insights. Hosted by Claude Code (not Crab). Posts to #trading daily."
 ---
 
@@ -41,7 +41,7 @@ Search for market-moving news from the past 24 hours:
 WebSearch: "stock market news today [date]"
 WebSearch: "breaking financial news [date]"
 WebSearch: "FOMC Fed Reserve [current month]"
-WebSearch: "S&P 500 Nasdaq [date] market open"
+WebSearch: "S&P 500 Nasdaq VIX DXY [date] market open"
 WebSearch: "CPI inflation jobs report [current month]"
 WebSearch: "earnings announcements today [date]"
 ```
@@ -90,27 +90,33 @@ Format the briefing as a single Discord message:
 
 ```
 📊 **Daily Market Briefing — [Day, Month Date, Year]**
-_Informational only — not financial advice_
+_Informational only — not financial advice. Key levels are approximate; confirm live quotes._
 
-**🔴/🟢/⚪ Macro Pulse: [risk-on/risk-off/neutral] — [one-line summary]**
-Key levels: S&P [level] · Nasdaq [level] · VIX [level] · 10Y [level] · DXY [level]
+**📈 Macro Pulse:** [Risk-off / Risk-on / Mixed] ([primary driver: geopolitics/oil | Fed | earnings | macro data])
+Key levels (prev. close): S&P [level] · Nasdaq [chg%] · Dow [level] · VIX [level] · 10Y [yield]% · DXY [level] · WTI [level]
 
 **📰 Breaking News**
-• [Story 1 — 1 sentence, market impact]
-• [Story 2]
-• [Story 3]
+• **[Headline]** — [1 sentence, market impact]
+• **[Headline]** — [1 sentence]
+• **[Headline]** — [1 sentence]
 
 **🎯 Watchlist**
 • **[TICKER]** — [1-sentence observation] [🟢/🔴/⚪]
 • **[TICKER]** — ...
-_(skipped — watchlist empty)_
+_(No watchlist configured — add tickers via `/lobsterfarm/trading/watchlist` SSM param or `watchlist add TICKER Label` in #trading)_
 
 **🌐 Outside Signals**
-• [Item 1 — sector/theme/geo/commodity]
+• [Item 1 — sector/theme/geo/commodity, 1 sentence]
 • [Item 2]
+• [Item 3]
+
+**✅ Today's Checklist** _(not advice — items to monitor)_
+• Econ calendar: [key events today, e.g. "CPI 8:30am ET" or "No major data"]
+• Watch levels: [e.g. "WTI $92/$95 · 10Y 4.5% · DXY 104"]
+• If [key risk scenario]: [consider evaluating X, e.g. "consider evaluating growth exposure if oil breaks $95"]
 
 ---
-_Sources: web search · not financial advice · verify before acting_
+_Sources: major financial media + official releases · not financial advice_
 ```
 
 Post to Discord channel `1486584391256772688` using the Discord reply tool with `chat_id: "1486584391256772688"`.
