@@ -1,6 +1,6 @@
 ---
 name: discord-comms
-version: 1.4.0
+version: 1.5.0
 description: Rules for mentioning bots and users in Discord so they receive inbound notifications. TRIGGER whenever you are addressing another bot or user in a Discord channel message.
 ---
 
@@ -99,6 +99,18 @@ Both bots run on the same EC2 instance as `ec2-user`.
 Then restart ClawDude: `systemctl --user restart openclaw-gateway.service`
 
 ---
+
+## LobsterFarm/stock-trading
+
+Repo: https://github.com/LobsterFarm/stock-trading
+
+- Alpaca Trading & Market Data MCP via mcporter + alpaca-mcp-server
+- `config/mcporter.json` — mcporter server config (uses `${ENV_VAR}` refs)
+- `scripts/alpaca.sh` — one-stop wrapper for common Alpaca commands
+- `scripts/load-env.sh` — source to export creds into shell
+- `alpaca.json` — **local only, git-ignored**; copy from `alpaca.json.example`
+- Paper trading default (`ALPACA_PAPER_TRADE=true`)
+- Local path on EC2: `~/stock-trading`
 
 ## LobsterFarm/spend-tracker Context
 
