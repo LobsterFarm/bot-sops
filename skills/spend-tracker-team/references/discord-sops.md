@@ -13,14 +13,11 @@ npm install -g openclaw          # or however openclaw is distributed
 # Re-add Discord token, guild/channel allowlist (see Cluster Setup below)
 systemctl --user enable --now openclaw-gateway.service
 ```
-Restore local secrets:
-- `~/stock-trading/alpaca.json` — copy from `alpaca.json.example`, fill in keys
-
 Restore project:
 ```bash
 git clone https://github.com/LobsterFarm/stock-trading ~/stock-trading
-cp ~/stock-trading/alpaca.json.example ~/stock-trading/alpaca.json
-# edit alpaca.json with real key + secret
+# No manual creds needed — alpaca.sh/load-env.sh auto-fetch from SSM on first run
+# and cache to ~/stock-trading/alpaca.json
 ```
 
 Skills auto-sync from `LobsterFarm/bot-sops` on first run (or force: `systemctl --user start sync-skills`).
