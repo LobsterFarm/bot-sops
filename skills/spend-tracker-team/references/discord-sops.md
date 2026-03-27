@@ -22,6 +22,33 @@ git clone https://github.com/LobsterFarm/stock-trading ~/stock-trading
 
 Skills auto-sync from `LobsterFarm/bot-sops` on first run (or force: `systemctl --user start sync-skills`).
 
+### 3. Stock Auto-Trader (paper trading, systemd-managed)
+
+```bash
+# Copy service units from stock-trading repo (or recreate from discord-sops)
+cp ~/stock-trading/ops/systemd/stock-trader.service ~/.config/systemd/user/
+cp ~/stock-trading/ops/systemd/stock-trader-notify.service ~/.config/systemd/user/
+systemctl --user daemon-reload
+systemctl --user enable --now stock-trader.service
+```
+
+Service files are in `LobsterFarm/stock-trading` under `ops/systemd/`. Alpaca creds load automatically from SSM on first run.
+
+Healthcheck: `service-healthcheck.sh` monitors `stock-trader` and posts to #ops on:
+- unexpected stop (not halted)
+- hard stop (`halted=true` in `trader/state.json`)
+- recovery
+
+Manual control:
+```bash
+systemctl --user status stock-trader
+journalctl --user -u stock-trader -n 50 -f
+systemctl --user stop stock-trader
+# After hard stop — clear halt flag:
+python3 -c "import json; p='stock-trading/trader/state.json'; d=json.load(open(p)); d['halted']=False; json.dump(d,open(p,'w'),indent=2)"
+systemctl --user start stock-trader
+```
+
 ### 2. ClaudeCode (Claude Code CLI)
 ```bash
 # Install claude CLI, configure Discord plugin
