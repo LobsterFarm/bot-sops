@@ -1,6 +1,6 @@
 ---
 name: trading-insights
-version: 1.1.0
+version: 1.2.0
 description: "Daily stock market insights for LobsterFarm. TRIGGER when: (1) an OpenClaw cron fires the daily trading briefing, OR (2) a user in #trading (channel 1486584391256772688) asks for market news, watchlist updates, or trading insights. Hosted by Claude Code (not Crab). Posts to #trading daily."
 ---
 
@@ -131,6 +131,21 @@ Users can also trigger sections manually by @mentioning Claude Code:
 - `@ClaudeCode briefing` → run all steps (full report)
 - `watchlist add AAPL Apple` → append to SSM watchlist param and confirm
 - `watchlist remove AAPL` → remove from SSM watchlist and confirm
+
+## Alpaca MCP Tools (real-time data)
+
+For real-time quotes, snapshots, or account info, use the Alpaca MCP tooling from `LobsterFarm/stock-trading` (local path: `~/stock-trading`):
+
+```bash
+~/stock-trading/scripts/alpaca.sh quote AAPL        # real-time quote
+~/stock-trading/scripts/alpaca.sh snapshot TSLA     # full OHLCV + quote + trade
+~/stock-trading/scripts/alpaca.sh account           # account balance/status
+~/stock-trading/scripts/alpaca.sh call alpaca.get_stock_bars symbols=NVDA timeframe=1Day limit=5
+```
+
+Credentials auto-load from `~/stock-trading/alpaca.json` (or SSM fallback — see `LobsterFarm/stock-trading`).
+
+Use Alpaca tools when you need **precise live prices**. Use WebSearch when you need **news/context**.
 
 ## Portability
 
