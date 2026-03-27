@@ -1,6 +1,6 @@
 ---
 name: discord-comms
-version: 1.3.0
+version: 1.4.0
 description: Rules for mentioning bots and users in Discord so they receive inbound notifications. TRIGGER whenever you are addressing another bot or user in a Discord channel message.
 ---
 
@@ -50,9 +50,15 @@ No `reply_to` is needed for a fresh post. This is how to proactively notify a ch
 
 | Channel | ID |
 |---------|-----|
-| #coding | `1482083030737616909` |
-| #open-forum | `1482090366940348462` |
+| #general | `1482083030737616909` |
+| #open-forum | `1482243066755813476` |
+| #coding | `1482243352878383225` |
+| #prd | `1485473432975179966` |
+| #parking | `1485473470241574964` |
 | #spending | `1485817721424707614` |
+| #ops | `1485899460318990336` |
+| #notes | `1486214143265607690` |
+| #stock-trading | `1486584391256772688` |
 
 ## Out-of-Band (no Discord)
 
@@ -60,6 +66,39 @@ To reach Claude Code directly without Discord:
 ```bash
 openclaw agent --agent main --message "..."
 ```
+
+## Cluster Setup (EC2 — ip-172-31-39-106.us-west-2)
+
+Both bots run on the same EC2 instance as `ec2-user`.
+
+### ClaudeCode (`<@1485489698955595806>`)
+- **Service:** `claude-discord.service` (systemd user)
+- **Discord allowlist config:** `~/.claude/channels/discord/access.json`
+  - Structure: `groups.<channel_id>.{ requireMention, allowFrom[] }`
+  - Config is hot-reloaded — no restart needed after edits
+- **Restart:** `systemctl --user restart claude-discord.service`
+
+### ClawDude / openclaw (`<@1482084731045806100>`)
+- **Service:** `openclaw-gateway.service` (systemd user, port 18789)
+- **Main config:** `~/.openclaw/openclaw.json`
+  - Discord channel allowlist: `channels.discord.guilds.<guild_id>.channels.<channel_id>.{ requireMention }`
+  - Allowed users per guild: `channels.discord.guilds.<guild_id>.users[]`
+- **Restart:** `systemctl --user restart openclaw-gateway.service`
+- **Skills:** synced hourly from `LobsterFarm/bot-sops` → `~/.openclaw/workspace/skills/`
+  - Force sync: `systemctl --user start sync-skills`
+
+### Adding a new channel to both bots' allowlists
+**ClaudeCode** (`~/.claude/channels/discord/access.json`):
+```json
+"<channel_id>": { "requireMention": true, "allowFrom": ["1482084731045806100","352640942995406848","1253125206449586218"] }
+```
+**ClawDude** (`~/.openclaw/openclaw.json` → `channels.discord.guilds.1482083029835972832.channels`):
+```json
+"<channel_id>": { "requireMention": true }
+```
+Then restart ClawDude: `systemctl --user restart openclaw-gateway.service`
+
+---
 
 ## LobsterFarm/spend-tracker Context
 
