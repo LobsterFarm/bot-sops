@@ -2,6 +2,44 @@
 
 ---
 
+## Post-Wipe Rebuild Checklist
+
+After a fresh EC2 instance (or full wipe), restore in this order:
+
+### 1. ClawDude (OpenClaw)
+```bash
+npm install -g openclaw          # or however openclaw is distributed
+# Run openclaw configure to set up ~/.openclaw/openclaw.json
+# Re-add Discord token, guild/channel allowlist (see Cluster Setup below)
+systemctl --user enable --now openclaw-gateway.service
+```
+Restore local secrets:
+- `~/stock-trading/alpaca.json` — copy from `alpaca.json.example`, fill in keys
+
+Restore project:
+```bash
+git clone https://github.com/LobsterFarm/stock-trading ~/stock-trading
+cp ~/stock-trading/alpaca.json.example ~/stock-trading/alpaca.json
+# edit alpaca.json with real key + secret
+```
+
+Skills auto-sync from `LobsterFarm/bot-sops` on first run (or force: `systemctl --user start sync-skills`).
+
+### 2. ClaudeCode (Claude Code CLI)
+```bash
+# Install claude CLI, configure Discord plugin
+# Restore ~/.claude/channels/discord/.env (DISCORD_BOT_TOKEN)
+# Restore ~/.claude/channels/discord/access.json (channel allowlist)
+systemctl --user enable --now claude-discord.service
+```
+
+### 3. Verify
+- Both bots appear online in Discord
+- `systemctl --user status openclaw-gateway.service claude-discord.service`
+- Test a mention in #general for each bot
+
+---
+
 ## Cluster Setup
 
 ### Bots & Discord IDs
