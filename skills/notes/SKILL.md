@@ -1,7 +1,7 @@
 ---
 name: notes
-version: 1.2.0
-description: "LobsterFarm notes skill. TRIGGER when: (1) a message arrives from Discord channel 1486214143265607690 (#notes), OR (2) user asks to save/find/tag/delete/remind a note in any channel. Low-noise: ACK with reaction only, no verbose replies unless showing data."
+version: 1.3.0
+description: "LobsterFarm notes skill. TRIGGER when: (1) a message arrives from Discord channel 1486214143265607690 (#notes), OR (2) user asks to save/find/tag/delete/remind a note in any channel, OR (3) OpenClaw cron fires notes-daily-rollup. Low-noise: ACK with reaction only, no verbose replies unless showing data."
 ---
 
 # Notes — Channel Skill
@@ -72,3 +72,44 @@ Load and use this skill whenever:
 ## ID matching
 
 Users give short IDs (last 6-8 chars). `GET /notes`, find note whose `id` ends with it.
+
+## Daily Rollup
+
+Triggered by OpenClaw cron `notes-daily-rollup` (9pm PT). Posts to `#notes` channel (`1486214143265607690`).
+
+### Required behavior
+
+1. **Fetch real channel history** — call `fetch_messages` on channel `1486214143265607690` with `limit=100`. Collect all messages from today (UTC date matching the cron fire time). Filter out bot messages and reactions-only entries.
+
+2. **Fetch notes saved today** — `GET /notes` and filter to notes where `created_at` is today's UTC date.
+
+3. **Synthesize a real summary** from what you actually found:
+   - Group notes by tag if tags exist
+   - Call out any themes or patterns across the day's notes
+   - Mention any notes that have open reminders
+   - Keep it concise — 5–10 lines max
+
+4. **Post the rollup** to `#notes` in this format:
+   ```
+   📋 **Notes Rollup — [Day, Month Date]**
+   [X notes saved today]
+
+   [Grouped or thematic summary — real content only]
+
+   [Optional: ⏰ Reminders pending: <short-id> — <text preview>]
+   ```
+
+### What NOT to do
+
+- ❌ Do NOT post placeholder text like "No notes today" or "Summary unavailable" unless you have genuinely fetched history and found zero notes AND zero channel messages
+- ❌ Do NOT emit a rollup with fabricated or template-filled content
+- ❌ Do NOT skip the `fetch_messages` step — always read actual history before deciding there is nothing to summarize
+- ❌ Do NOT post to any channel other than `1486214143265607690`
+
+### If there is genuinely no content
+
+Only if `GET /notes` returns 0 notes for today AND `fetch_messages` returns 0 non-bot messages for today:
+```
+📋 **Notes Rollup — [Day, Month Date]**
+No notes saved today.
+```
