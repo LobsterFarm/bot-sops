@@ -1,7 +1,7 @@
 ---
 name: notes
-version: 1.3.0
-description: "LobsterFarm notes skill. TRIGGER when: (1) a message arrives from Discord channel 1486214143265607690 (#notes), OR (2) user asks to save/find/tag/delete/remind a note in any channel, OR (3) OpenClaw cron fires notes-daily-rollup. Low-noise: ACK with reaction only, no verbose replies unless showing data."
+version: 1.4.0
+description: "LobsterFarm notes skill. TRIGGER when: (1) a message arrives from Discord channel 1486214143265607690 (#notes), OR (2) user asks to save/find/tag/delete/remind a note in any channel, OR (3) OpenClaw cron fires notes-daily-rollup. Crab listens to ALL messages in #notes (no mention gate). Low-noise: ACK saves with reaction only."
 ---
 
 # Notes — Channel Skill
@@ -16,7 +16,8 @@ Load and use this skill whenever:
 
 ## Behavior Rules
 
-- **@mention required** — only respond when @mentioned (channel config: `requireMention: true`)
+- **#notes is mention-free** — Crab listens to ALL messages in channel `1486214143265607690` (channel config: `allow: true`, no requireMention). Do not require @mention for awareness.
+- **Only respond when asked** — do not reply to every message. React or respond only when the user @mentions you or issues a command.
 - **Low-noise** — ACK a saved note with ✅ reaction only, or a one-line reply max
 - **Daily rollup** is an OpenClaw cron job (`notes-daily-rollup`) — do NOT post it manually
 - **On-demand** commands (find, list, show) respond when @mentioned
