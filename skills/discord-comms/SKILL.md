@@ -76,9 +76,9 @@ openclaw agent --agent main --message "..."
 |-----|----------|-------|
 | ClaudeCode (`<@1485489698955595806>`) | `ip-172-31-39-106.us-west-2` | This machine |
 | ClawDude (`<@1482084731045806100>`) | `ip-172-31-39-106.us-west-2` | This machine |
-| Crab (`<@1482082263222059189>`) | **Separate EC2 instance** | NOT on this machine — must be configured there |
+| Crab (`<@1482082263222059189>`) | `claw-anna` — `54.213.75.255` | Separate EC2 — SSH via `ssh -i ~/.ssh/claw.pem ec2-user@54.213.75.255` |
 
-When adding a new channel: ClaudeCode and ClawDude can be configured from this EC2. **Crab must be configured on its own instance** — ask gfrshadow for access.
+When adding a new channel: ClaudeCode and ClawDude can be configured from this EC2. **Crab must be configured on `claw-anna`** via SSH. Config: `~/.openclaw/openclaw.json` → `channels.discord.guilds.1482083029835972832.channels`. Add `"<channel_id>": { "allow": true, "requireMention": true }`, then `systemctl --user restart openclaw-gateway.service`.
 
 ### ClaudeCode (`<@1485489698955595806>`)
 - **Service:** `claude-discord.service` (systemd user)
