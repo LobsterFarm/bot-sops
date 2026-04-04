@@ -59,6 +59,7 @@ No `reply_to` is needed for a fresh post. This is how to proactively notify a ch
 | #ops | `1485899460318990336` |
 | #notes | `1486214143265607690` |
 | #stock-trading | `1486584391256772688` |
+| #nutrition | `1489878869862518844` |
 
 ## Out-of-Band (no Discord)
 
@@ -67,9 +68,17 @@ To reach Claude Code directly without Discord:
 openclaw agent --agent main --message "..."
 ```
 
-## Cluster Setup (EC2 — ip-172-31-39-106.us-west-2)
+## Cluster Setup
 
-Both bots run on the same EC2 instance as `ec2-user`.
+**IMPORTANT: Bots do NOT all live on the same instance.**
+
+| Bot | Instance | Notes |
+|-----|----------|-------|
+| ClaudeCode (`<@1485489698955595806>`) | `ip-172-31-39-106.us-west-2` | This machine |
+| ClawDude (`<@1482084731045806100>`) | `ip-172-31-39-106.us-west-2` | This machine |
+| Crab (`<@1482082263222059189>`) | **Separate EC2 instance** | NOT on this machine — must be configured there |
+
+When adding a new channel: ClaudeCode and ClawDude can be configured from this EC2. **Crab must be configured on its own instance** — ask gfrshadow for access.
 
 ### ClaudeCode (`<@1485489698955595806>`)
 - **Service:** `claude-discord.service` (systemd user)
