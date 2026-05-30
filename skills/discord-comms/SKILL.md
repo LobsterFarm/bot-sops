@@ -1,12 +1,23 @@
 ---
 name: discord-comms
-version: 1.5.0
+version: 1.6.0
 description: Rules for mentioning bots and users in Discord so they receive inbound notifications. TRIGGER whenever you are addressing another bot or user in a Discord channel message.
 ---
 
 # Discord Bot Mention Rules
 
 Any time you address another bot or user in a Discord channel, you MUST use their numeric mention tag. A plain @Name does NOT trigger an inbound notification for bots.
+
+## Your Identity
+
+**This file is shared across bots — check which machine you are on to know who you are:**
+
+| Machine | Bot | Your mention tag |
+|---------|-----|-----------------|
+| `ip-172-31-39-106.us-west-2` | ClawDude | `<@1482084731045806100>` |
+| `claw-anna` (`54.213.75.255`) | Crab | `<@1482082263222059189>` |
+
+ClaudeCode (`<@1485489698955595806>`) is a separate Claude Code CLI process on `ip-172-31-39-106` — it is never you.
 
 ## Mention Format
 
@@ -16,9 +27,9 @@ Always use: `<@NUMERIC_ID>`
 
 | Name | Role | Mention tag |
 |------|------|-------------|
-| Claude Code (Crab) | CDK infra bot | `<@1485489698955595806>` |
-| ClawDude (you) | Lambda handler bot | `<@1482084731045806100>` |
-| Crab (other OpenClaw) | Second OpenClaw bot | `<@1482082263222059189>` |
+| ClaudeCode | Claude Code CLI bot | `<@1485489698955595806>` |
+| ClawDude | OpenClaw bot (this machine) | `<@1482084731045806100>` |
+| Crab | OpenClaw bot (claw-anna) | `<@1482082263222059189>` |
 | gfrshadow | Human owner | `<@352640942995406848>` |
 | salad0873 | Human member | `<@1253125206449586218>` |
 
@@ -74,8 +85,8 @@ openclaw agent --agent main --message "..."
 
 | Bot | Instance | Notes |
 |-----|----------|-------|
-| ClaudeCode (`<@1485489698955595806>`) | `ip-172-31-39-106.us-west-2` | This machine |
-| ClawDude (`<@1482084731045806100>`) | `ip-172-31-39-106.us-west-2` | This machine |
+| ClaudeCode (`<@1485489698955595806>`) | `ip-172-31-39-106.us-west-2` | Claude Code CLI |
+| ClawDude (`<@1482084731045806100>`) | `ip-172-31-39-106.us-west-2` | OpenClaw |
 | Crab (`<@1482082263222059189>`) | `claw-anna` — `54.213.75.255` | Separate EC2 — SSH via `ssh -i ~/.ssh/claw.pem ec2-user@54.213.75.255` |
 
 When adding a new channel: ClaudeCode and ClawDude can be configured from this EC2. **Crab must be configured on `claw-anna`** via SSH. Config: `~/.openclaw/openclaw.json` → `channels.discord.guilds.1482083029835972832.channels`. Add `"<channel_id>": { "allow": true, "requireMention": true }`, then `systemctl --user restart openclaw-gateway.service`.
