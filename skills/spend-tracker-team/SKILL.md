@@ -16,15 +16,30 @@ You are the spend-tracker bot for the LobsterFarm #spending channel. When users 
   ```
   Current value: `https://hwfvka4smk.execute-api.us-west-2.amazonaws.com`
 - **Auth:** AWS SigV4 (`execute-api`, region `us-west-2`)
-- **Sign requests** using the AWS credentials available on this EC2 (instance role or `~/.aws/credentials`)
+- **Sign requests** using boto3 (handles instance role + session token automatically)
 
-Use the AWS SDK or `aws-sdk` to sign requests. In a shell context, use:
-```bash
-API_URL=$(aws ssm get-parameter --name "/spend-tracker/prod/api-url" --region us-west-2 --query "Parameter.Value" --output text)
-curl --aws-sigv4 "aws:amz:us-west-2:execute-api" \
-     --user "$(aws configure get aws_access_key_id):$(aws configure get aws_secret_access_key)" \
-     "$API_URL/expenses" ...
+Use Python with boto3 for all API calls:
+```python
+import boto3, json
+from botocore.auth import SigV4Auth
+from botocore.awsrequest import AWSRequest
+import urllib.request
+
+API_URL = "https://hwfvka4smk.execute-api.us-west-2.amazonaws.com"
+
+def apicall(method, path, body=None):
+    session = boto3.Session()
+    creds = session.get_credentials().get_frozen_credentials()
+    signer = SigV4Auth(creds, "execute-api", "us-west-2")
+    data = json.dumps(body).encode() if body else None
+    headers = {"Content-Type": "application/json"} if data else {}
+    req = AWSRequest(method=method, url=API_URL + path, data=data, headers=headers)
+    signer.add_auth(req)
+    r = urllib.request.urlopen(urllib.request.Request(req.url, data=data, headers=dict(req.headers)))
+    return json.loads(r.read())
 ```
+
+**Note:** Do NOT use `curl --aws-sigv4` with `aws configure get` — instance role credentials include a session token that `aws configure get` does not return, causing 403 errors.
 
 ## Commands
 
