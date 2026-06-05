@@ -1,6 +1,6 @@
 ---
 name: trading-insights
-version: 1.2.0
+version: 1.2.1
 description: "Daily stock market insights for LobsterFarm. TRIGGER when: (1) an OpenClaw cron fires the daily trading briefing, OR (2) a user in #trading (channel 1486584391256772688) asks for market news, watchlist updates, or trading insights. Hosted by Claude Code (not Crab). Posts to #trading daily."
 ---
 
